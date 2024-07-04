@@ -6,4 +6,15 @@
 
 <slot></slot>
 
-<style></style>
+<style>
+
+	/* Fixing ghost button color */
+
+	:global(.bx--btn--ghost.bx--btn--icon-only .bx--btn__icon path:not([data-icon-path]):not([fill=none])){
+		fill: var(--cds-link-01, #0f62fe) !important;
+	}
+
+	:global(.bx--btn--ghost:hover.bx--btn--icon-only .bx--btn__icon path:not([data-icon-path]):not([fill=none])){
+		fill:var(--cds-hover-primary-text, #0043ce) !important;
+	}
+</style>
