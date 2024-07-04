@@ -145,6 +145,7 @@
 			{#each $passwords as password}
 				<div class="horizontal">
 					<CopyButton text="" on:click={() => copy_password_result(password)} />
+					<Button kind="ghost" iconDescription="Copy ${password}" icon={TdesignCopy} on:click={() => copy_password_result(password)} />
 					<p class="password-result">{password}</p>
 				</div>
 			{/each}
