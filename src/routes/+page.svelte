@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Frame from '$lib/components/Frame.svelte';
+	import InlineButton from '$lib/components/InlineButton.svelte';
 	import {
 		Tile,
 		Checkbox,
@@ -130,6 +131,7 @@
 	</Tile>
 
 	<Tile light>
+		<InlineButton icon={TdesignCopy} iconDescription="TDesignCopy" tooltipPosition="bottom" tooltipAlignment="center"/>
 		<Button kind="ghost" iconDescription="TDesignCopy" icon={TdesignCopy}/>
 		<Button kind="ghost" iconDescription="CarbonCopy" icon={CarbonCopy}/>
 		<Button kind="ghost" iconDescription="LucideClipboard" icon={LucideClipboard}/>
