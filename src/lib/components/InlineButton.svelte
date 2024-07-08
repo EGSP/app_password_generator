@@ -7,9 +7,9 @@
 
 	export let iconDescription: string;
 
-	export let tooltipAlignment: 'start' | 'center' | 'end' = 'center';
+	// export let tooltipAlignment: 'start' | 'center' | 'end' = 'center';
 
-	export let tooltipPosition: 'top' | 'right' | 'bottom' | 'left' = 'bottom';
+	// export let tooltipPosition: 'top' | 'right' | 'bottom' | 'left' = 'bottom';
 
 	$: iconProps = {
 		'aria-hidden': true,
@@ -19,7 +19,7 @@
 	$: buttonProps = {
 		'aria-pressed': isSelected,
 		...$$restProps,
-		class: ['btn-inline', isSelected && 'btn-inline.selected'].filter(Boolean).join(' ')
+		class: [isSelected && 'btn-inline.selected'].filter(Boolean).join(' ')
 	};
 
 	/** Obtain a reference to the HTML element */
@@ -44,9 +44,9 @@
 	<span class="btn-inline-tooltip">{iconDescription}</span>
 	<!-- svelte-ignore empty-block -->
 	{#if $$slots.icon}
-		<slot name="icon" {...iconProps} />
+		<slot name="icon" {...iconProps} class="icon" />
 	{:else if icon}
-		<svelte:component this={icon} {...iconProps} class="btn-inline icon" />
+		<svelte:component this={icon} {...iconProps} class="icon" />
 	{/if}
 </button>
 
@@ -63,27 +63,46 @@
 		border-color: rgba(0, 0, 0, 0);
 		background-color: rgba(0, 0, 0, 0);
 		color: var(--cds-link-01, #0f62fe);
-		padding: calc(0.875rem - 3px) 16px;
+		/* padding: calc(0.875rem - 3px) 16px; */
+		padding: 4px 4px;
 
 		font-size: var(--cds-body-short-01-font-size, 0.875rem);
 		font-weight: var(--cds-body-short-01-font-weight, 400);
 		line-height: var(--cds-body-short-01-line-height, 1.28572);
 		letter-spacing: var(--cds-body-short-01-letter-spacing, 0.16px);
+
+		transition:
+			background 70ms cubic-bezier(0, 0, 0.38, 0.9),
+			box-shadow 70ms cubic-bezier(0, 0, 0.38, 0.9),
+			border-color 70ms cubic-bezier(0, 0, 0.38, 0.9),
+			outline 70ms cubic-bezier(0, 0, 0.38, 0.9);
+	}
+
+	.btn-inline:hover {
+		color: var(--cds-hover-primary-text, #0043ce);
+		background-color: var(--cds-hover-ui, #e5e5e5);
+	}
+
+	.btn-inline:focus {
+		outline: 2px solid var(--cds-focus, #0f62fe);
+		outline-offset: -2px;
+		outline-color: var(--cds-focus, #0f62fe);
+	}
+
+	.btn-inline:active {
+		background-color: var(--cds-layer-active, #c6c6c6);
 	}
 
 	:global(.btn-inline.selected) {
 	}
 
-	.btn-inline .icon {
-	}
-
-	.btn-inline.tooltip-ally:hover::before {
+	.btn-inline.tooltip-ally::before {
 		display: flex;
 		position: absolute;
 		z-index: 6000;
 
 		animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
-		/* opacity: 1; */
+		opacity: 0;
 
 		border-style: solid;
 		border-width: 0 0.25rem 0.3125rem 0.25rem;
@@ -94,7 +113,7 @@
 		height: 0;
 		left: 50%;
 		/* bottom: -0.5rem; */
-		bottom: -0.03rem;
+		bottom: -0.55rem;
 
 		align-items: center;
 		pointer-events: none;
@@ -102,12 +121,14 @@
 		content: '';
 	}
 
-	.btn-inline .btn-inline-tooltip {
-		overflow: visible;
-		margin: auto;
-		clip: auto;
+	.btn-inline.tooltip-ally:hover::before {
+		opacity: 1;
+	}
 
-		bottom: -1.8125rem;
+	.btn-inline .btn-inline-tooltip {
+		clip: rect(0 0 0 0);
+
+		bottom: -2.4rem;
 		-webkit-transform: translate(-50%, 100%);
 		transform: translate(-50%, 100%);
 
@@ -147,6 +168,7 @@
 		align-items: center;
 	}
 	.btn-inline:hover .btn-inline-tooltip {
+		clip: auto;
 		animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
 		opacity: 1;
 	}
@@ -158,9 +180,9 @@
 		content: '';
 		left: 0;
 		width: 100%;
-		height: 0.75rem;
-		top: -0.75rem;
-        pointer-events: all;
+		height: 0.90rem;
+		top: -0.90rem;
+		pointer-events: all;
 	}
 
 	@keyframes tooltip-fade {

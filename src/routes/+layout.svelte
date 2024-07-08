@@ -17,4 +17,10 @@
 	:global(.bx--btn--ghost:hover.bx--btn--icon-only .bx--btn__icon path:not([data-icon-path]):not([fill=none])){
 		fill:var(--cds-hover-primary-text, #0043ce) !important;
 	}
+
+	:global(.icon) {
+		width: 1rem;
+		height: 1rem;
+		flex-shrink: 0;
+	}
 </style>

@@ -8,16 +8,16 @@
 		RadioButtonGroup,
 		RadioButton,
 		Slider,
-		Tag,
-		CopyButton
+		Tag
 	} from 'carbon-components-svelte';
 	import { writable, derived } from 'svelte/store';
 	import { invoke } from '@tauri-apps/api/tauri';
 	import { writeText } from '@tauri-apps/api/clipboard';
 
+	import CopyButton from '$lib/components/CopyButton.svelte'
 	import CarbonCopy from '$lib/icons/CarbonCopy.svelte';
 	import LucideClipboard from '$lib/icons/LucideClipboard.svelte';
-	import MaterialSymbolsContentCopyOutlineSharp from '$lib/icons/MaterialSymbolsContentCopyOutlineSharp.svelte';
+	import MaterialCopy from '$lib/icons/MaterialCopy.svelte';
 	import TdesignCopy from '$lib/icons/TdesignCopy.svelte';
 	import FlowbiteClipboardListOutline from '$lib/icons/FlowbiteClipboardListOutline.svelte';
 	const checked_values_order = ['special', 'numbers', 'lowercase', 'uppercase'];
@@ -135,7 +135,7 @@
 		<Button kind="ghost" iconDescription="TDesignCopy" icon={TdesignCopy}/>
 		<Button kind="ghost" iconDescription="CarbonCopy" icon={CarbonCopy}/>
 		<Button kind="ghost" iconDescription="LucideClipboard" icon={LucideClipboard}/>
-		<Button kind="ghost" iconDescription="MaterialSymbolsContentCopyOutlineSharp" icon={MaterialSymbolsContentCopyOutlineSharp}/>
+		<Button kind="ghost" iconDescription="MaterialSymbolsContentCopyOutlineSharp" icon={MaterialCopy}/>
 		<Button kind="ghost" iconDescription="FlowbiteClipboardListOutline" icon={FlowbiteClipboardListOutline}/>
 	</Tile>
 
@@ -146,7 +146,8 @@
 		{:else}
 			{#each $passwords as password}
 				<div class="horizontal">
-					<CopyButton text="" on:click={() => copy_password_result(password)} />
+
+					<CopyButton valueToCopy={password} />
 					<Button kind="ghost" iconDescription="Copy ${password}" icon={TdesignCopy} on:click={() => copy_password_result(password)} />
 					<p class="password-result">{password}</p>
 				</div>
