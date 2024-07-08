@@ -7,7 +7,8 @@
 		RadioButtonGroup,
 		RadioButton,
 		Slider,
-		Tag
+		Tag,
+		InlineNotification
 	} from 'carbon-components-svelte';
 	import { writable, derived } from 'svelte/store';
 	import { invoke } from '@tauri-apps/api/tauri';
@@ -25,10 +26,39 @@
 			(a, b) => checked_values_order.indexOf(a) - checked_values_order.indexOf(b)
 		)
 	);
+
+	let password_length = writable<number>(8);
+
 	let passwords = writable<string[]>([]);
 
-	let password_length: number = 8;
+	let is_generation_allowed_charset = derived(checked_values, ($checked_values) => {
+		return $checked_values.length > 0;
+	});
 
+	let is_generation_allowed_length = derived(
+		[password_length, checked_values],
+		([$password_length, $checked_values]) => {
+			return $password_length > $checked_values.length - 1;
+		}
+	);
+
+	let is_generation_allowed = derived(
+		[is_generation_allowed_charset, is_generation_allowed_length],
+		([$is_generation_allowed_charset, $is_generation_allowed_length]) =>
+			$is_generation_allowed_charset && $is_generation_allowed_length
+	);
+
+	// Observe any changes to reset password array
+	$: {
+		$checked_values, $password_length;
+		passwords.set([]);
+	}
+
+	$: {
+		if($password_length < $checked_values.length) {
+			$password_length = $checked_values.length
+		}
+	}
 	$checked_values = ['lowercase', 'uppercase'];
 
 	async function generate_passwords() {
@@ -38,9 +68,9 @@
 		let has_uppercase = $checked_values.includes('uppercase');
 
 		passwords.set([]);
-		for (let i = 0; i < 10; i++) {
+		for (let i = 0; i < 5; i++) {
 			let password = await invoke<string>('generate_password', {
-				length: password_length,
+				length: $password_length,
 				symbols: has_symbols,
 				numbers: has_numbers,
 				uppercase: has_uppercase,
@@ -89,7 +119,7 @@
 			<RadioButtonGroup
 				legendText="Predefined password lengths"
 				name="length"
-				bind:selected={password_length}
+				bind:selected={$password_length}
 			>
 				<RadioButton labelText="5" value={5} />
 				<RadioButton labelText="8" value={8} />
@@ -98,13 +128,13 @@
 			</RadioButtonGroup>
 			<Slider
 				labelText="Custom password length"
-				min={2}
+				min={$checked_values.length}
 				max={55}
-				value={password_length}
+				value={$password_length}
 				on:change={(event) => {
 					let value = event.detail;
 					// console.log(value);
-					password_length = value;
+					$password_length = value;
 				}}
 			/>
 		</Row>
@@ -117,32 +147,57 @@
 			<Checkbox bind:group={$checked_values} labelText="Uppercase" value="uppercase" checked />
 		</Row>
 		<Row>
-			<p style="margin-right:var(--cds-spacing-03)">Checked values:</p>
+			<p class="tags-label">Checked values:</p>
 			{#each $checked_values_ordered as value}
 				<Tag type={get_tag_color(value)}>{value}</Tag>
 			{/each}
 		</Row>
 	</Tile>
 
-	<Tile light>
-		<Button on:click={generate_passwords}>Generate password</Button>
-	</Tile>
+	{#if !$is_generation_allowed}
+		<Tile light>
+			{#if !$is_generation_allowed_length}
+				<InlineNotification
+					hideCloseButton
+					kind="warning"
+					title="Not enough length:"
+					subtitle="Please select a length higher than checked values"
+				/>
+			{/if}
+			{#if !$is_generation_allowed_charset}
+				<InlineNotification
+					hideCloseButton
+					kind="warning"
+					title="No characters selected:"
+					subtitle="Please select at least one character option"
+				/>
+			{/if}
+		</Tile>
+	{/if}
 
 	<Tile light>
-		<p>Results go here</p>
-		<Column>
-			{#if $passwords.length === 0}
-				<p>No passwords generated</p>
-			{:else}
-				{#each $passwords as password}
-					<div class="horizontal">
-						<CopyButton valueToCopy={password} />
-						<p class="password-result">{password}</p>
-					</div>
-				{/each}
-			{/if}
-		</Column>
+		<Button disabled={!$is_generation_allowed} on:click={generate_passwords}
+			>Generate password</Button
+		>
 	</Tile>
+
+	{#if $passwords.length > 0}
+		<Tile light>
+			<p>Results go here</p>
+			<Column>
+				{#if $passwords.length === 0}
+					<p>No passwords generated</p>
+				{:else}
+					{#each $passwords as password}
+						<div class="horizontal">
+							<CopyButton valueToCopy={password} />
+							<p class="password-result">{password}</p>
+						</div>
+					{/each}
+				{/if}
+			</Column>
+		</Tile>
+	{/if}
 </Column>
 
 <style>
@@ -154,5 +209,11 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+	}
+
+	.tags-label {
+		margin-right: var(--cds-spacing-03);
+		margin-top: var(--cds-spacing-02);
+		margin-bottom: var(--cds-spacing-02);
 	}
 </style>
