@@ -93,15 +93,12 @@
 		background-color: var(--cds-layer-active, #c6c6c6);
 	}
 
-	:global(.btn-inline.selected) {
-	}
-
 	.btn-inline.tooltip-ally::before {
 		display: flex;
 		position: absolute;
 		z-index: 6000;
 
-		animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
+		/* animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); */
 		opacity: 0;
 
 		border-style: solid;
@@ -134,7 +131,7 @@
 
 		left: 50%;
 
-		pointer-events: all;
+		/* pointer-events: all; */
 
 		opacity: 0;
 
@@ -182,7 +179,9 @@
 		width: 100%;
 		height: 0.90rem;
 		top: -0.90rem;
-		pointer-events: all;
+		/* pointer-events: all; */
+		pointer-events: none;
+
 	}
 
 	@keyframes tooltip-fade {

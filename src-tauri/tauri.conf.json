@@ -63,7 +63,7 @@
         "height": 600,
         "resizable": true,
         "title": "app-password-generator",
-        "width": 800
+        "width": 700
       }
     ]
   }

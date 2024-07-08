@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Frame from '$lib/components/Frame.svelte';
-	import InlineButton from '$lib/components/InlineButton.svelte';
 	import {
 		Tile,
 		Checkbox,
@@ -14,12 +13,10 @@
 	import { invoke } from '@tauri-apps/api/tauri';
 	import { writeText } from '@tauri-apps/api/clipboard';
 
-	import CopyButton from '$lib/components/CopyButton.svelte'
-	import CarbonCopy from '$lib/icons/CarbonCopy.svelte';
-	import LucideClipboard from '$lib/icons/LucideClipboard.svelte';
-	import MaterialCopy from '$lib/icons/MaterialCopy.svelte';
-	import TdesignCopy from '$lib/icons/TdesignCopy.svelte';
-	import FlowbiteClipboardListOutline from '$lib/icons/FlowbiteClipboardListOutline.svelte';
+	import CopyButton from '$lib/components/CopyButton.svelte';
+	import Row from '$lib/components/Row.svelte';
+	import Column from '$lib/components/Column.svelte';
+
 	const checked_values_order = ['special', 'numbers', 'lowercase', 'uppercase'];
 
 	let checked_values = writable<string[]>([]);
@@ -84,14 +81,11 @@
 	}
 </script>
 
-<Frame direction="column">
-	<Tile light>
-		<Button on:click={generate_passwords}>Generate password</Button>
-	</Tile>
+<Column>
 	<!-- <div class="tile-space" /> -->
 	<Tile light>
 		<p>Settings go here</p>
-		<Frame direction="column">
+		<Row>
 			<RadioButtonGroup
 				legendText="Predefined password lengths"
 				name="length"
@@ -113,48 +107,43 @@
 					password_length = value;
 				}}
 			/>
-		</Frame>
-
-		<Frame direction="row">
+		</Row>
+	</Tile>
+	<Tile>
+		<Row>
 			<Checkbox bind:group={$checked_values} labelText="Special symbols" value="special" />
 			<Checkbox bind:group={$checked_values} labelText="Numbers" value="numbers" />
 			<Checkbox bind:group={$checked_values} labelText="Lowercase" value="lowercase" checked />
 			<Checkbox bind:group={$checked_values} labelText="Uppercase" value="uppercase" checked />
-		</Frame>
-
-		<Frame>
+		</Row>
+		<Row>
 			<p style="margin-right:var(--cds-spacing-03)">Checked values:</p>
 			{#each $checked_values_ordered as value}
 				<Tag type={get_tag_color(value)}>{value}</Tag>
 			{/each}
-		</Frame>
+		</Row>
 	</Tile>
 
 	<Tile light>
-		<InlineButton icon={TdesignCopy} iconDescription="TDesignCopy" tooltipPosition="bottom" tooltipAlignment="center"/>
-		<Button kind="ghost" iconDescription="TDesignCopy" icon={TdesignCopy}/>
-		<Button kind="ghost" iconDescription="CarbonCopy" icon={CarbonCopy}/>
-		<Button kind="ghost" iconDescription="LucideClipboard" icon={LucideClipboard}/>
-		<Button kind="ghost" iconDescription="MaterialSymbolsContentCopyOutlineSharp" icon={MaterialCopy}/>
-		<Button kind="ghost" iconDescription="FlowbiteClipboardListOutline" icon={FlowbiteClipboardListOutline}/>
+		<Button on:click={generate_passwords}>Generate password</Button>
 	</Tile>
 
 	<Tile light>
 		<p>Results go here</p>
-		{#if $passwords.length === 0}
-			<p>No passwords generated</p>
-		{:else}
-			{#each $passwords as password}
-				<div class="horizontal">
-
-					<CopyButton valueToCopy={password} />
-					<Button kind="ghost" iconDescription="Copy ${password}" icon={TdesignCopy} on:click={() => copy_password_result(password)} />
-					<p class="password-result">{password}</p>
-				</div>
-			{/each}
-		{/if}
+		<Column>
+			{#if $passwords.length === 0}
+				<p>No passwords generated</p>
+			{:else}
+				{#each $passwords as password}
+					<div class="horizontal">
+						<CopyButton valueToCopy={password} />
+						<p class="password-result">{password}</p>
+					</div>
+				{/each}
+			{/if}
+		</Column>
 	</Tile>
-</Frame>
+</Column>
 
 <style>
 	.password-result {
