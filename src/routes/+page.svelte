@@ -55,8 +55,8 @@
 	}
 
 	$: {
-		if($password_length < $checked_values.length) {
-			$password_length = $checked_values.length
+		if ($password_length < $checked_values.length) {
+			$password_length = $checked_values.length;
 		}
 	}
 	$checked_values = ['lowercase', 'uppercase'];
@@ -158,6 +158,7 @@
 		<Tile light>
 			{#if !$is_generation_allowed_length}
 				<InlineNotification
+					lowContrast
 					hideCloseButton
 					kind="warning"
 					title="Not enough length:"
@@ -166,6 +167,7 @@
 			{/if}
 			{#if !$is_generation_allowed_charset}
 				<InlineNotification
+					lowContrast
 					hideCloseButton
 					kind="warning"
 					title="No characters selected:"
